@@ -1,0 +1,31 @@
+server:
+  # 端口
+  port: 80
+spring:
+  # 数据连接池
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:13306/db_takeout?zeroDateTimeBehavior=convertToNull
+    username: root
+    password: zjh97867860
+    type: com.alibaba.druid.pool.DruidDataSource
+  # 配置文件上传大小
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+      enabled: true
+
+mybatis-plus:
+  configuration:
+    # 在映射实体类或者属性时，将数据库中的表名或字段名中的下划线去掉，按照驼峰命名映射
+    map-underscore-to-camel-case: true
+    # 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # 生成策略
+  global-config:
+    db-config:
+      id-type: assign_id
+# 配置动态文件生成路径
+takeout:
+  path: D:\\takeout\\img\\
