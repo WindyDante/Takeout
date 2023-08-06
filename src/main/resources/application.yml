@@ -15,6 +15,11 @@ spring:
       max-file-size: 30MB
       max-request-size: 30MB
       enabled: true
+  redis:
+    host: localhost #这里换成localhost或者你自己的linux上装的redis
+    password: 123456
+    port: 6379
+    database: 0
 
 mybatis-plus:
   configuration:
