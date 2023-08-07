@@ -17,6 +17,8 @@ import com.eastwind.service.SetmealDishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +39,7 @@ public class SetmealController {
     private CategoryService categoryService;
 
     @GetMapping("/list")
+    @Cacheable(value = "SetmealCache",key = "#setmeal.categoryId + '_' + #setmeal.status",unless = "#result == null ")
     public Result<List<SetmealDto>> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         // 得到该套餐项对应的菜品
@@ -125,6 +128,7 @@ public class SetmealController {
     }
 
     @PostMapping
+    @CacheEvict(value = "SetmealCache",key = "#setmealDto.categoryId + '_' + '_1'")
     public Result<String> save(@RequestBody SetmealDto setmealDto) {
         log.info("套餐信息：{}", setmealDto);
         setMealService.saveWithDish(setmealDto);
