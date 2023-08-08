@@ -2,13 +2,46 @@ server:
   # 端口
   port: 80
 spring:
-  # 数据连接池
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:13306/db_takeout?zeroDateTimeBehavior=convertToNull
-    username: root
-    password: zjh97867860
-    type: com.alibaba.druid.pool.DruidDataSource
+  shardingsphere:
+    datasource:
+      names:
+        # 这里的master和slave并不是写死的，但是需要跟下面的master和slave对应
+        # 定义了两个数据源，名叫master和slave
+        master,slave
+      # 主数据源
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        # 主库ip及连接的数据库名
+        url: jdbc:mysql://192.168.10.135:3306/reggie?serverTimezone=UTC&useSSL=false
+        username: root
+        # 我的数据库没有密码，所以这里注释了，有需要可以自己调整
+        # password: root
+      # 从数据源
+      slave:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        # 从库ip及连接的数据库名
+        url: jdbc:mysql://192.168.10.134:3306/reggie?serverTimezone=UTC&useSSL=false
+        username: root
+        # password: root
+    masterslave:
+      # 读写分离配置
+      # 负载均衡：配置的是从库的负载均衡策略(轮询策略)
+      # 轮询：从库可以有多个，假设有3个从库，第一次走sql查询就是走1号库，第二次走2号，这样以此类		   推，直到走完之后再次重复一遍，说白了就是按顺序来
+      load-balance-algorithm-type: round_robin
+      # 最终的数据源名称
+      name: dataSource
+      # 指定主库数据源名称
+      master-data-source-name: master
+      # 指定从库数据源名称列表，多个从库用逗号分隔
+      slave-data-source-names: slave
+    props:
+      sql:
+        show: true #开启SQL显示，默认false，就是在控制台可以输出sql
+    # 配置允许bean定义覆盖配置项
+  main:
+    allow-bean-definition-overriding: true
   # 配置文件上传大小
   servlet:
     multipart:
